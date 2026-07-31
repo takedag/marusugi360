@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="ja"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>マンション銀河｜360°室内ツアー</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.7/build/pannellum.css">
+<style>
+:root{--green:#15864b;--glass:rgba(15,20,18,.82);--shadow:0 8px 28px rgba(0,0,0,.28)}
+*{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;overflow:hidden;background:#111;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif}button{font:inherit}
+#app{position:relative;width:100%;height:100dvh}#panorama{position:absolute;inset:0}
+.topbar{position:absolute;z-index:20;left:12px;right:12px;top:calc(10px + env(safe-area-inset-top));min-height:52px;padding:8px 10px 8px 15px;border-radius:14px;background:var(--glass);color:#fff;display:flex;align-items:center;justify-content:space-between;gap:12px;backdrop-filter:blur(10px);box-shadow:var(--shadow)}
+.title{font-size:17px;font-weight:800;line-height:1.2}.subtitle{font-size:11px;opacity:.76;margin-top:3px}#sceneName{font-size:14px;font-weight:800;background:rgba(255,255,255,.12);padding:8px 11px;border-radius:10px;white-space:nowrap}
+.controls{position:absolute;z-index:21;left:12px;bottom:calc(112px + env(safe-area-inset-bottom));display:flex;gap:7px;flex-wrap:wrap}.uiBtn{border:0;border-radius:11px;padding:9px 12px;background:rgba(20,25,23,.86);color:#fff;font-size:12px;font-weight:700;box-shadow:var(--shadow);cursor:pointer}.uiBtn.primary{background:var(--green)}.uiBtn.active{outline:2px solid #fff}
+.thumbsWrap{position:absolute;z-index:19;left:0;right:0;bottom:0;transition:transform .22s ease,opacity .22s ease;background:linear-gradient(transparent,rgba(0,0,0,.84) 24%);padding-top:26px}.thumbsWrap.hidden{transform:translateY(110%);opacity:0;pointer-events:none}.thumbs{display:flex;gap:8px;overflow-x:auto;padding:8px 12px calc(10px + env(safe-area-inset-bottom));scrollbar-width:none}.thumbs::-webkit-scrollbar{display:none}.thumb{flex:0 0 116px;padding:0;border:2px solid transparent;border-radius:11px;overflow:hidden;background:#222;color:#fff;cursor:pointer;box-shadow:0 5px 16px rgba(0,0,0,.3)}.thumb.active{border-color:#60e49a;transform:translateY(-2px)}.thumb img{display:block;width:100%;height:62px;object-fit:cover;background:#333}.thumb span{display:block;padding:6px 7px;font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mapPanel{position:absolute;z-index:22;top:78px;right:12px;width:260px;background:rgba(255,255,255,.94);border-radius:16px;padding:12px;box-shadow:var(--shadow);transition:.22s ease}.mapPanel.closed{opacity:0;visibility:hidden;transform:translateY(-8px)}.mapHead{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}.mapHead strong{font-size:14px}.mapHead button{border:0;background:#eee;border-radius:8px;padding:4px 8px;cursor:pointer}.floorMap{position:relative;border:2px solid #444;background:#f3f1e9;border-radius:8px;overflow:hidden}.floorplanImage{display:block;width:100%;height:auto}
+.room{position:absolute;border:1px solid #777;background:rgba(255,255,255,.72);font-size:10px;display:flex;align-items:center;justify-content:center;text-align:center;padding:2px}.roomBtn{
+ position:absolute;
+ width:36px;
+ height:36px;
+ border-radius:50%;
+ border:2px solid rgba(255,255,255,.95);
+ background:rgba(21,134,75,.58);
+ color:#fff;
+ font-size:16px;
+ font-weight:900;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ padding:0;
+ line-height:1;
+ box-sizing:border-box;
+ text-shadow:0 1px 3px rgba(0,0,0,.75);
+ box-shadow:0 3px 9px rgba(0,0,0,.28);
+ backdrop-filter:blur(1px);
+ cursor:pointer
+}.roomBtn.active{
+ background:rgba(225,73,73,.68);
+ transform:scale(1.10);
+ border-color:#fff
+}
+.r-bal-n{left:7%;top:2%;width:42%;height:10%}.r-room6{left:7%;top:12%;width:42%;height:27%}.r-room48{left:51%;top:12%;width:42%;height:27%}.r-hall{left:39%;top:39%;width:22%;height:28%}.r-entrance{left:39%;top:67%;width:22%;height:14%}.r-toilet{left:61%;top:39%;width:16%;height:14%}.r-wash{left:77%;top:39%;width:16%;height:18%}.r-bath{left:77%;top:57%;width:16%;height:22%}.r-kitchen{left:7%;top:67%;width:32%;height:14%}.r-ldk{left:7%;top:39%;width:32%;height:28%}.r-room{left:7%;top:81%;width:54%;height:16%}.r-bal-s{left:61%;top:81%;width:32%;height:16%}
+#b-entrance{left:46%;top:70%}#b-hall{left:46%;top:51%}#b-kitchen{left:18%;top:70%}#b-ldk{left:20%;top:51%}#b-room{left:30%;top:85%}#b-bal-s{left:73%;top:86%}#b-room6{left:22%;top:22%}#b-bal-n{left:22%;top:3%}#b-room48{left:68%;top:22%}#b-wash{left:81%;top:45%}#b-bath{left:81%;top:64%}#b-toilet{left:65%;top:44%}.mapNote{font-size:10px;color:#666;margin-top:7px;line-height:1.4}
+.custom-hotspot{width:50px;height:50px;border-radius:50%;background:rgba(21,134,75,.92);border:3px solid rgba(255,255,255,.95);box-shadow:0 5px 18px rgba(0,0,0,.4);cursor:pointer}.custom-hotspot::before{content:"➜";position:absolute;inset:0;display:grid;place-items:center;color:#fff;font-size:28px;font-weight:900;transform:rotate(-90deg)}.custom-hotspot::after{content:attr(data-label);position:absolute;left:50%;bottom:54px;transform:translateX(-50%);background:rgba(0,0,0,.82);color:#fff;padding:5px 8px;border-radius:7px;white-space:nowrap;font-size:11px}.coordBox{position:absolute;z-index:30;left:12px;top:78px;background:rgba(0,0,0,.8);color:#fff;padding:9px 11px;border-radius:10px;font:12px monospace;display:none}.coordBox.on{display:block}
+@media(max-width:700px){.topbar{left:7px;right:7px}.title{font-size:14px}.subtitle{display:none}.mapPanel{width:210px;right:7px;top:72px}.floorMap{height:auto}.controls{left:7px;bottom:calc(105px + env(safe-area-inset-bottom))}.uiBtn{padding:8px 10px}.thumb{flex-basis:102px}.thumb img{height:54px}}
+@media(orientation:landscape) and (max-height:560px){.topbar{top:5px;min-height:38px;padding:5px 8px}.title{font-size:13px}.subtitle{display:none}#sceneName{font-size:11px;padding:6px 8px}.thumbsWrap{transform:translateY(100%);transition:.22s}.thumbsWrap.open{transform:translateY(0)}.controls{bottom:8px}.mapPanel{top:49px;width:188px;padding:8px}.floorMap{height:auto}.mapNote{display:none}}
+
+.mapEditStatus{
+ position:absolute;z-index:31;right:12px;bottom:calc(112px + env(safe-area-inset-bottom));
+ background:rgba(0,0,0,.82);color:#fff;padding:8px 10px;border-radius:10px;
+ font-size:12px;font-weight:800;display:none
+}
+.mapEditStatus.on{display:block}
+.mapPanel.editing .roomBtn{
+ cursor:grab;
+ outline:2px dashed rgba(255,255,255,.95);
+ touch-action:none;
+}
+.mapPanel.editing .floorMap{
+ outline:3px solid rgba(255,193,7,.95);
+}
+
+
+.pnlm-context-menu,
+.pnlm-about-msg{
+  display:none !important;
+  visibility:hidden !important;
+  pointer-events:none !important;
+}
+
+.mapEditTools{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:5px;
+ margin-bottom:8px;
+}
+.mapEditTools button{
+ border:0;
+ border-radius:8px;
+ padding:7px 4px;
+ background:rgba(21,134,75,.88);
+ color:#fff;
+ font-size:11px;
+ font-weight:800;
+ cursor:pointer;
+}
+.mapEditTools button.active{
+ background:#e14949;
+ outline:2px solid rgba(255,255,255,.95);
+}
+
+.hotspotEditor{position:absolute;z-index:35;left:12px;top:78px;width:290px;background:rgba(255,255,255,.96);border-radius:14px;padding:12px;box-shadow:var(--shadow);color:#222}
+.hotspotEditor.closed{display:none}.hotspotEditor h3{font-size:14px;margin:0 0 8px}.hotspotEditor label{display:block;font-size:11px;font-weight:800;margin:7px 0 3px}.hotspotEditor select,.hotspotEditor input{width:100%;padding:7px;border:1px solid #bbb;border-radius:7px;background:#fff}.hotspotGrid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}.hotspotGrid button,.hotspotEditor .wideBtn{border:0;border-radius:8px;padding:8px;background:#15864b;color:#fff;font-weight:800;cursor:pointer}.hotspotEditor .wideBtn{width:100%;margin-top:7px}.hotspotEditor .danger{background:#b44141}.hotspotReadout{margin-top:7px;font:12px monospace;background:#eee;padding:7px;border-radius:7px}.crosshair{position:absolute;z-index:34;left:50%;top:50%;width:34px;height:34px;transform:translate(-50%,-50%);pointer-events:none;display:none}.crosshair.on{display:block}.crosshair:before,.crosshair:after{content:"";position:absolute;background:#ffdf00;box-shadow:0 0 3px #000}.crosshair:before{left:16px;top:0;width:2px;height:34px}.crosshair:after{left:0;top:16px;width:34px;height:2px}.editorLaunch{position:absolute;z-index:32;left:12px;top:78px;border:0;border-radius:10px;padding:9px 12px;background:#d58a00;color:#fff;font-weight:900;cursor:pointer}.publicMode .editorLaunch,.publicMode .hotspotEditor,.publicMode .mapEditTools,.publicMode #mapEditStatus,.publicMode .crosshair,.publicMode #coordBtn,.publicMode #coordBox{display:none!important}
+@media(max-width:700px){.hotspotEditor{left:7px;top:72px;width:250px}.editorLaunch{left:7px;top:72px}}
+
+</style>
+</head>
+<body data-public-mode="true" class="publicMode">
+<div id="app"><div id="panorama" tabindex="0"></div>
+<header class="topbar"><div><div class="title">マンション銀河 360°室内ツアー</div><div class="subtitle">株式会社マルスギ</div></div><div id="sceneName">トイレ</div></header>
+<aside id="mapPanel" class="mapPanel">
+<div class="mapHead">
+  <strong>間取りから移動</strong>
+  <button id="mapClose">×</button>
+</div>
+<div class="mapEditTools">
+  <button type="button" id="mapEditBtn">丸位置調整</button>
+  <button type="button" id="mapSaveBtn">一時保存</button>
+  <button type="button" id="mapResetBtn">リセット</button>
+  <button type="button" id="mapExportBtn">公開用HTML保存</button>
+</div>
+<div class="floorMap">
+<img class="floorplanImage" src="./floorplan.png" alt="マンション銀河 間取り図">
+<button class="roomBtn" id="b-entrance" style="left: 40.4%; top: 29.88%;" data-scene="entrance">1</button>
+<button class="roomBtn" id="b-hall" style="left: 40.4%; top: 40.83%;" data-scene="hall">2</button>
+<button class="roomBtn" id="b-kitchen" style="left: 29.38%; top: 42.98%;" data-scene="kitchen">3</button>
+<button class="roomBtn" id="b-ldk" style="left: 31.36%; top: 69.01%;" data-scene="ldk">4</button>
+<button class="roomBtn" id="b-room" style="left: 64.97%; top: 68.65%;" data-scene="room">5</button>
+<button class="roomBtn" id="b-bal-s" style="left: 48.31%; top: 85.88%;" data-scene="balconySouth">6</button>
+<button class="roomBtn" id="b-room6" style="left: 67.51%; top: 18.4%;" data-scene="room6">7</button>
+<button class="roomBtn" id="b-bal-n" style="left: 68.93%; top: 0.81%;" data-scene="balconyNorth">8</button>
+<button class="roomBtn" id="b-room48" style="left: 41.53%; top: 15.35%;" data-scene="room48">9</button>
+<button class="roomBtn" id="b-wash" style="left: 60.73%; top: 42.45%;" data-scene="washroom">10</button>
+<button class="roomBtn" id="b-bath" style="left: 74.86%; top: 41.01%;" data-scene="bathroom">11</button>
+<button class="roomBtn active" id="b-toilet" style="left: 52.82%; top: 49.27%;" data-scene="toilet">12</button>
+</div>
+<div class="mapNote">番号を押すと移動します。</div>
+</aside>
+
+<button id="hotspotEditOpen" class="editorLaunch" type="button">360°リンク位置調整</button>
+<section id="hotspotEditor" class="hotspotEditor">
+  <h3>360°画像内の緑ボタン位置調整</h3>
+  <label for="editSceneSelect">編集する写真</label>
+  <select id="editSceneSelect"><option value="entrance">玄関</option><option value="hall">廊下</option><option value="kitchen">キッチン</option><option value="ldk">LDK</option><option value="room">洋室</option><option value="balconySouth">南側バルコニー</option><option value="room6">洋室6帖</option><option value="balconyNorth">北側バルコニー</option><option value="room48">洋室4.8帖</option><option value="washroom">洗面脱衣室</option><option value="bathroom">浴室</option><option value="toilet">トイレ</option></select>
+  <label for="editLinkSelect">動かす緑ボタン</label>
+  <select id="editLinkSelect"><option value="0">1. 廊下へ</option></select>
+  <div id="hotspotReadout" class="hotspotReadout">pitch: 5.4 / yaw: 12.6 / 移動先: 廊下</div>
+  <div style="border-top:1px solid #ccc;margin-top:10px;padding-top:6px;font-size:11px;font-weight:900">緑ボタンの追加・削除</div>
+  <label for="newLinkTarget">追加する移動先</label>
+  <select id="newLinkTarget"><option value="entrance">玄関</option><option value="hall">廊下</option><option value="kitchen">キッチン</option><option value="ldk">LDK</option><option value="room">洋室</option><option value="balconySouth">南側バルコニー</option><option value="room6">洋室6帖</option><option value="balconyNorth">北側バルコニー</option><option value="room48">洋室4.8帖</option><option value="washroom">洗面脱衣室</option><option value="bathroom">浴室</option></select>
+  <label for="newLinkLabel">緑ボタンに表示する名前</label>
+  <input id="newLinkLabel" type="text" placeholder="例：浴室へ">
+  <button id="addHotspotCenter" class="wideBtn" type="button">黄色十字の位置に緑ボタンを追加</button>
+  <button id="deleteHotspot" class="wideBtn danger" type="button">選択中の緑ボタンを削除</button>
+  <button id="setHotspotCenter" class="wideBtn" type="button">画面中央（黄色十字）に設定</button>
+  <div class="hotspotGrid">
+    <button type="button" data-nudge="pitch" data-delta="1">上へ 1°</button>
+    <button type="button" data-nudge="pitch" data-delta="-1">下へ 1°</button>
+    <button type="button" data-nudge="yaw" data-delta="-1">左へ 1°</button>
+    <button type="button" data-nudge="yaw" data-delta="1">右へ 1°</button>
+  </div>
+  <button id="hotspotTempSave" class="wideBtn" type="button">リンク位置を一時保存</button>
+  <button id="hotspotReset" class="wideBtn danger" type="button">リンク位置を初期状態へ</button>
+  <button id="hotspotEditorClose" class="wideBtn" type="button">調整画面を閉じる</button>
+  <div style="font-size:10px;line-height:1.45;margin-top:7px;color:#555">写真を選び、360°画面を動かして、置きたい場所を黄色十字に合わせます。既存ボタンは「画面中央に設定」、新規ボタンは移動先と名前を指定して「追加」を押します。削除は選択中のボタンが対象です。最後に右上の「公開用HTML保存」を押します。</div>
+</section>
+<div id="crosshair" class="crosshair on"></div>
+
+<div class="controls"><button class="uiBtn primary" id="fullBtn">全画面</button><button class="uiBtn" id="mapBtn">間取り図</button><button class="uiBtn" id="rotateBtn">自動回転</button><button class="uiBtn" id="thumbBtn">写真一覧</button><button class="uiBtn" id="coordBtn">座標確認</button></div><div id="coordBox" class="coordBox">pitch: 0 / yaw: 0</div>
+<div id="mapEditStatus" class="mapEditStatus">トイレ「廊下へ」を中央位置に設定しました</div><div id="thumbsWrap" class="thumbsWrap open"><nav id="thumbs" class="thumbs"></nav></div></div>
+<script id="sceneData" type="application/json">{"entrance":{"title":"玄関","image":"images/01_玄関.JPG","yaw":0,"links":[{"pitch":0.2,"yaw":-55.4,"target":"room48","label":"洋室4.8帖へ"},{"pitch":1.9,"yaw":-18.5,"target":"room6","label":"洋室6帖へ"},{"pitch":3.1,"yaw":54.5,"target":"washroom","label":"洗面脱衣室へ"},{"pitch":2.5,"yaw":67.9,"target":"toilet","label":"トイレへ"},{"pitch":2.6,"yaw":77.7,"target":"ldk","label":"LDKへ"}]},"hall":{"title":"廊下","image":"images/02_廊下.JPG","yaw":0,"links":[{"pitch":6,"yaw":97.1,"target":"ldk","label":"LDKへ"},{"pitch":0.5,"yaw":-72,"target":"room48","label":"洋室4.8帖へ"},{"pitch":-1.5,"yaw":-27.1,"target":"washroom","label":"洗面脱衣室へ"},{"pitch":1.4,"yaw":54.7,"target":"toilet","label":"トイレへ"}]},"kitchen":{"title":"キッチン","image":"images/03_キッチン.JPG","yaw":0,"links":[{"pitch":-15.2,"yaw":80.3,"target":"ldk","label":"LDKへ"},{"pitch":-14.7,"yaw":-4.6,"target":"hall","label":"廊下へ"}]},"ldk":{"title":"LDK","image":"images/04_LDK.JPG","yaw":0,"links":[{"pitch":-2,"yaw":117.3,"target":"hall","label":"廊下へ"},{"pitch":-1.6,"yaw":90.4,"target":"kitchen","label":"キッチンへ"},{"pitch":-5,"yaw":-178.4,"target":"room","label":"洋室へ"},{"pitch":-4.4,"yaw":-97.1,"target":"balconySouth","label":"南側バルコニーへ"}]},"room":{"title":"洋室","image":"images/05_洋室.JPG","yaw":0,"links":[{"pitch":-4.9,"yaw":-33,"target":"ldk","label":"LDKへ"},{"pitch":-3.9,"yaw":-121.4,"target":"balconySouth","label":"南側バルコニーへ"}]},"balconySouth":{"title":"南側バルコニー","image":"images/06_南バルコニー.JPG","yaw":0,"links":[{"pitch":-11.4,"yaw":162.3,"target":"room","label":"洋室へ戻る"},{"pitch":-8.3,"yaw":16.9,"target":"ldk","label":"LDKへ"}]},"room6":{"title":"洋室6帖","image":"images/07_洋室6帖.JPG","yaw":0,"links":[{"pitch":-7,"yaw":74.5,"target":"hall","label":"廊下へ"},{"pitch":-8.5,"yaw":-158.2,"target":"balconyNorth","label":"北側バルコニーへ"}]},"balconyNorth":{"title":"北側バルコニー","image":"images/08_北バルコニー.JPG","yaw":0,"links":[{"pitch":-10,"yaw":169.9,"target":"room6","label":"洋室6帖へ戻る"}]},"room48":{"title":"洋室4.8帖","image":"images/09_洋室4.8帖.JPG","yaw":0,"links":[{"pitch":-5.8,"yaw":30.7,"target":"hall","label":"廊下へ"}]},"washroom":{"title":"洗面脱衣室","image":"images/10_洗面脱衣室.JPG","yaw":0,"links":[{"pitch":-2.8,"yaw":-3.4,"target":"hall","label":"廊下へ"},{"pitch":-8,"yaw":170.9,"target":"bathroom","label":"浴室へ"}]},"bathroom":{"title":"浴室","image":"images/11_浴室.JPG","yaw":0,"links":[{"pitch":-0.1,"yaw":0.6,"target":"washroom","label":"洗面脱衣室へ"}]},"toilet":{"title":"トイレ","image":"images/12_トイレ.JPG","yaw":0,"links":[{"pitch":5.4,"yaw":12.6,"target":"hall","label":"廊下へ"}]}}</script>
+<script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.7/build/pannellum.js"></script>
+<script>
+const publicMode=document.body.dataset.publicMode==="true";
+if(publicMode) document.body.classList.add("publicMode");
+const scenes=JSON.parse(document.getElementById("sceneData").textContent);
+const initialScenes=JSON.parse(JSON.stringify(scenes));
+let currentScene="entrance";
+function spotId(sceneId,index){return `spot-${sceneId}-${index}`}
+function moveSpot(div,args){div.classList.add("custom-hotspot");div.dataset.label=args.label||"移動"}
+function makeSpot(sceneId,index,link){return {id:spotId(sceneId,index),pitch:link.pitch,yaw:link.yaw,type:"scene",sceneId:link.target,cssClass:"custom-hotspot",createTooltipFunc:moveSpot,createTooltipArgs:{label:link.label},text:link.label}}
+const pannellumScenes={};
+Object.entries(scenes).forEach(([id,s])=>{pannellumScenes[id]={title:s.title,type:"equirectangular",panorama:s.image,pitch:-3,yaw:s.yaw,hfov:120,minHfov:50,maxHfov:120,hotSpots:s.links.map((l,i)=>makeSpot(id,i,l))}});
+const viewer=pannellum.viewer("panorama",{default:{firstScene:"entrance",autoLoad:true,autoRotate:-6,autoRotateInactivityDelay:2500,sceneFadeDuration:850,showControls:true,showFullscreenCtrl:false,compass:false,mouseZoom:true,draggable:true},scenes:pannellumScenes});
+document.getElementById("panorama").addEventListener("contextmenu",e=>{e.preventDefault();e.stopPropagation()},{capture:true});
+const thumbs=document.getElementById("thumbs");
+Object.entries(scenes).forEach(([id,s],i)=>{const b=document.createElement("button");b.className="thumb";b.dataset.scene=id;b.innerHTML=`<img src="${s.image}" alt="${s.title}"><span>${String(i+1).padStart(2,"0")} ${s.title}</span>`;b.onclick=()=>viewer.loadScene(id);thumbs.appendChild(b)});
+let mapEditMode=false;
+function sync(id){currentScene=id;document.getElementById("sceneName").textContent=scenes[id].title;document.querySelectorAll("[data-scene]").forEach(el=>el.classList.toggle("active",el.dataset.scene===id));const active=document.querySelector(`.thumb[data-scene="${id}"]`);if(active)active.scrollIntoView({behavior:"smooth",block:"nearest",inline:"center"});if(!publicMode) syncEditorToScene(id)}
+viewer.on("scenechange",sync);
+document.querySelectorAll(".roomBtn").forEach(b=>b.addEventListener("click",e=>{if(mapEditMode){e.preventDefault();return}viewer.loadScene(b.dataset.scene)}));
+const map=document.getElementById("mapPanel");
+document.getElementById("mapBtn").onclick=()=>map.classList.toggle("closed");document.getElementById("mapClose").onclick=()=>map.classList.add("closed");document.getElementById("fullBtn").onclick=()=>{const el=document.getElementById("app");if(!document.fullscreenElement)el.requestFullscreen?.();else document.exitFullscreen?.()};let rotating=true;document.getElementById("rotateBtn").onclick=function(){rotating=!rotating;if(rotating){viewer.startAutoRotate(-6);this.classList.add("active")}else{viewer.stopAutoRotate();this.classList.remove("active")}};document.getElementById("rotateBtn").classList.add("active");document.getElementById("thumbBtn").onclick=function(){const wrap=document.getElementById("thumbsWrap");const hidden=wrap.classList.toggle("hidden");this.classList.toggle("active",!hidden);this.textContent=hidden?"写真一覧を表示":"写真一覧を隠す"};
+let coordOn=false,coordTimer=null;document.getElementById("coordBtn").onclick=function(){coordOn=!coordOn;this.classList.toggle("active",coordOn);document.getElementById("coordBox").classList.toggle("on",coordOn);if(coordOn){coordTimer=setInterval(()=>{document.getElementById("coordBox").textContent=`pitch: ${viewer.getPitch().toFixed(1)} / yaw: ${viewer.getYaw().toFixed(1)}`},120)}else clearInterval(coordTimer)};
+
+// 間取り図の丸数字調整
+const mapButtons=[...document.querySelectorAll(".roomBtn")],floorMap=document.querySelector(".floorMap"),mapEditBtn=document.getElementById("mapEditBtn"),mapSaveBtn=document.getElementById("mapSaveBtn"),mapResetBtn=document.getElementById("mapResetBtn"),mapExportBtn=document.getElementById("mapExportBtn"),mapEditStatus=document.getElementById("mapEditStatus");
+let dragging=null,movedDuringDrag=false;
+const initialMapPositions={};mapButtons.forEach(btn=>initialMapPositions[btn.id]={left:btn.style.left,top:btn.style.top});
+function setMapEditMode(on){mapEditMode=on;map.classList.toggle("editing",on);mapEditBtn?.classList.toggle("active",on);mapEditStatus?.classList.toggle("on",on);if(mapEditStatus)mapEditStatus.textContent=on?"丸位置調整：ON（丸をドラッグ）":"丸位置調整：OFF"}
+function moveMapButton(btn,clientX,clientY){const rect=floorMap.getBoundingClientRect(),halfW=btn.offsetWidth/2,halfH=btn.offsetHeight/2;let x=clientX-rect.left-halfW,y=clientY-rect.top-halfH;x=Math.max(0,Math.min(x,rect.width-btn.offsetWidth));y=Math.max(0,Math.min(y,rect.height-btn.offsetHeight));btn.style.left=((x/rect.width)*100).toFixed(2)+"%";btn.style.top=((y/rect.height)*100).toFixed(2)+"%"}
+if(!publicMode){
+ mapEditBtn.addEventListener("click",()=>{map.classList.remove("closed");setMapEditMode(!mapEditMode)});
+ mapButtons.forEach(btn=>{btn.addEventListener("pointerdown",e=>{if(!mapEditMode)return;e.preventDefault();e.stopImmediatePropagation();dragging=btn;movedDuringDrag=false;btn.setPointerCapture?.(e.pointerId);moveMapButton(btn,e.clientX,e.clientY)},true);btn.addEventListener("pointermove",e=>{if(!mapEditMode||dragging!==btn)return;e.preventDefault();e.stopImmediatePropagation();movedDuringDrag=true;moveMapButton(btn,e.clientX,e.clientY)},true);btn.addEventListener("pointerup",e=>{if(!mapEditMode||dragging!==btn)return;e.preventDefault();e.stopImmediatePropagation();btn.releasePointerCapture?.(e.pointerId);dragging=null},true);btn.addEventListener("click",e=>{if(mapEditMode||movedDuringDrag){e.preventDefault();e.stopImmediatePropagation()}movedDuringDrag=false},true)});
+ mapSaveBtn.addEventListener("click",saveTemporary);
+ mapResetBtn.addEventListener("click",()=>{localStorage.removeItem("gingaMapPositions");mapButtons.forEach(btn=>{btn.style.left=initialMapPositions[btn.id].left;btn.style.top=initialMapPositions[btn.id].top});showStatus("丸数字を初期状態に戻しました")});
+}
+
+// 360度内の緑ボタン調整
+const editor=document.getElementById("hotspotEditor"),editorOpen=document.getElementById("hotspotEditOpen"),editorClose=document.getElementById("hotspotEditorClose"),sceneSelect=document.getElementById("editSceneSelect"),linkSelect=document.getElementById("editLinkSelect"),targetSelect=document.getElementById("newLinkTarget"),newLinkLabel=document.getElementById("newLinkLabel"),readout=document.getElementById("hotspotReadout"),crosshair=document.getElementById("crosshair");
+function fillSceneSelect(){sceneSelect.innerHTML="";Object.entries(scenes).forEach(([id,s])=>{const o=document.createElement("option");o.value=id;o.textContent=s.title;sceneSelect.appendChild(o)})}
+function fillTargetSelect(){const sid=sceneSelect.value;targetSelect.innerHTML="";Object.entries(scenes).forEach(([id,s])=>{if(id===sid)return;const o=document.createElement("option");o.value=id;o.textContent=s.title;targetSelect.appendChild(o)});if(targetSelect.options.length){const target=targetSelect.value;newLinkLabel.value=scenes[target].title+"へ"}}
+function fillLinkSelect(preferredIndex=0){const sid=sceneSelect.value;linkSelect.innerHTML="";scenes[sid].links.forEach((l,i)=>{const o=document.createElement("option");o.value=String(i);o.textContent=`${i+1}. ${l.label}`;linkSelect.appendChild(o)});if(linkSelect.options.length)linkSelect.value=String(Math.min(preferredIndex,linkSelect.options.length-1));updateReadout()}
+function selectedLink(){const sid=sceneSelect.value,index=Number(linkSelect.value);return Number.isInteger(index)?scenes[sid].links[index]:null}
+function updateReadout(){const l=selectedLink();readout.textContent=l?`pitch: ${Number(l.pitch).toFixed(1)} / yaw: ${Number(l.yaw).toFixed(1)} / 移動先: ${scenes[l.target]?.title||l.target}`:"リンクなし"}
+function syncEditorToScene(id){if(!sceneSelect)return;sceneSelect.value=id;fillTargetSelect();fillLinkSelect()}
+function refreshSpot(sceneId,index){const link=scenes[sceneId].links[index];if(!link)return;viewer.removeHotSpot(spotId(sceneId,index),sceneId);viewer.addHotSpot(makeSpot(sceneId,index,link),sceneId);updateReadout()}
+function rebuildSceneSpots(sceneId,oldCount){for(let i=0;i<oldCount;i++)viewer.removeHotSpot(spotId(sceneId,i),sceneId);scenes[sceneId].links.forEach((l,i)=>viewer.addHotSpot(makeSpot(sceneId,i,l),sceneId))}
+function setSelectedToCenter(){const sid=sceneSelect.value,index=Number(linkSelect.value),link=scenes[sid].links[index];if(!link){showStatus("動かす緑ボタンを選んでください");return}link.pitch=Number(viewer.getPitch().toFixed(1));link.yaw=Number(viewer.getYaw().toFixed(1));refreshSpot(sid,index);showStatus(`${scenes[sid].title}「${link.label}」を中央位置に設定しました`)}
+function nudge(prop,delta){const sid=sceneSelect.value,index=Number(linkSelect.value),link=scenes[sid].links[index];if(!link){showStatus("動かす緑ボタンを選んでください");return}link[prop]=Number((Number(link[prop])+delta).toFixed(1));refreshSpot(sid,index)}
+function addHotspotAtCenter(){const sid=sceneSelect.value,target=targetSelect.value,label=newLinkLabel.value.trim();if(!target){showStatus("追加する移動先を選んでください");return}if(!label){showStatus("緑ボタンの名前を入力してください");newLinkLabel.focus();return}const oldCount=scenes[sid].links.length;scenes[sid].links.push({pitch:Number(viewer.getPitch().toFixed(1)),yaw:Number(viewer.getYaw().toFixed(1)),target,label});rebuildSceneSpots(sid,oldCount);fillLinkSelect(scenes[sid].links.length-1);showStatus(`${scenes[sid].title}に「${label}」を追加しました`)}
+function deleteSelectedHotspot(){const sid=sceneSelect.value,index=Number(linkSelect.value),link=scenes[sid].links[index];if(!link){showStatus("削除する緑ボタンがありません");return}if(!confirm(`「${link.label}」を削除しますか？`))return;const oldCount=scenes[sid].links.length;scenes[sid].links.splice(index,1);rebuildSceneSpots(sid,oldCount);fillLinkSelect(Math.max(0,index-1));showStatus(`「${link.label}」を削除しました`)}
+if(!publicMode){
+ fillSceneSelect();fillTargetSelect();fillLinkSelect();
+ editorOpen.onclick=()=>{editor.classList.remove("closed");crosshair.classList.add("on");viewer.stopAutoRotate();rotating=false;document.getElementById("rotateBtn").classList.remove("active");syncEditorToScene(currentScene)};
+ editorClose.onclick=()=>{editor.classList.add("closed");crosshair.classList.remove("on")};
+ sceneSelect.onchange=()=>{viewer.loadScene(sceneSelect.value);fillTargetSelect();fillLinkSelect()};linkSelect.onchange=updateReadout;targetSelect.onchange=()=>{newLinkLabel.value=scenes[targetSelect.value].title+"へ"};
+ document.getElementById("setHotspotCenter").onclick=setSelectedToCenter;
+ document.getElementById("addHotspotCenter").onclick=addHotspotAtCenter;
+ document.getElementById("deleteHotspot").onclick=deleteSelectedHotspot;
+ document.querySelectorAll("[data-nudge]").forEach(b=>b.onclick=()=>nudge(b.dataset.nudge,Number(b.dataset.delta)));
+ document.getElementById("hotspotTempSave").onclick=saveTemporary;
+ document.getElementById("hotspotReset").onclick=()=>{Object.keys(scenes).forEach(sid=>{scenes[sid].links.forEach((_,i)=>viewer.removeHotSpot(spotId(sid,i),sid));scenes[sid].links=JSON.parse(JSON.stringify(initialScenes[sid].links));scenes[sid].links.forEach((l,i)=>viewer.addHotSpot(makeSpot(sid,i,l),sid))});localStorage.removeItem("gingaHotspotScenes");fillTargetSelect();fillLinkSelect();showStatus("緑ボタン位置を初期状態に戻しました")};
+}
+function showStatus(text){if(!mapEditStatus)return;mapEditStatus.classList.add("on");mapEditStatus.textContent=text;setTimeout(()=>{mapEditStatus.classList.remove("on")},1800)}
+function saveTemporary(){const mapSaved={};mapButtons.forEach(btn=>mapSaved[btn.id]={left:btn.style.left,top:btn.style.top});localStorage.setItem("gingaMapPositions",JSON.stringify(mapSaved));localStorage.setItem("gingaHotspotScenes",JSON.stringify(scenes));showStatus("丸数字と緑ボタン位置をこの端末に一時保存しました")}
+function loadTemporary(){if(publicMode)return;try{const savedMap=JSON.parse(localStorage.getItem("gingaMapPositions")||"null");if(savedMap)mapButtons.forEach(btn=>{if(savedMap[btn.id]){btn.style.left=savedMap[btn.id].left;btn.style.top=savedMap[btn.id].top}});const savedScenes=JSON.parse(localStorage.getItem("gingaHotspotScenes")||"null");if(savedScenes){Object.keys(scenes).forEach(sid=>{scenes[sid].links.forEach((_,i)=>viewer.removeHotSpot(spotId(sid,i),sid));scenes[sid].links=savedScenes[sid]?.links||scenes[sid].links;scenes[sid].links.forEach((l,i)=>viewer.addHotSpot(makeSpot(sid,i,l),sid))})}}catch(err){console.warn("保存位置を読み込めませんでした",err)}}
+if(!publicMode){loadTemporary();fillTargetSelect();fillLinkSelect();}
+
+// 公開用HTML書き出し：現在値をHTML本体へ直接埋め込む
+if(!publicMode) mapExportBtn.addEventListener("click",()=>{const clone=document.documentElement.cloneNode(true);mapButtons.forEach(btn=>{const c=clone.querySelector("#"+btn.id);if(c){c.style.left=btn.style.left;c.style.top=btn.style.top}});clone.querySelector("#sceneData").textContent=JSON.stringify(scenes);clone.querySelector("body").dataset.publicMode="true";clone.querySelector("body").classList.add("publicMode");const note=clone.querySelector(".mapNote");if(note)note.textContent="番号を押すと移動します。";
+// 写真一覧と360°表示領域はJavaScriptで毎回生成するため、書き出し時は空にする
+const cloneThumbs=clone.querySelector("#thumbs");
+if(cloneThumbs) cloneThumbs.innerHTML="";
+const clonePanorama=clone.querySelector("#panorama");
+if(clonePanorama){
+  clonePanorama.innerHTML="";
+  clonePanorama.removeAttribute("class");
+  clonePanorama.removeAttribute("style");
+}
+const output="<!doctype html>\n"+clone.outerHTML;const blob=new Blob([output],{type:"text/html;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="index.html";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);showStatus("現在の丸数字・緑ボタン位置を埋め込んだ index.html を保存しました")});
+document.addEventListener("contextmenu",e=>{if(e.target.closest("#panorama"))e.preventDefault()});
+sync("entrance");
+</script><!-- Code injected by live-server -->
+<script>
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
+</script>
+
+</body></html>
